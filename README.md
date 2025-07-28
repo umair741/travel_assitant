@@ -1,100 +1,91 @@
 ✈️ Travel Assistant
-Welcome to Travel Assistant! Your AI-powered buddy for planning epic trips, checking weather, and finding the best spots to eat, stay, or explore. Built with LangChain, FastAPI, and APIs like Geoapify and OpenWeatherMap, this tool makes travel planning a breeze. 🌍
-🚀 What Can It Do?
+Your AI-powered travel buddy! Plan epic trips, check weather, and discover cool places to eat, stay, or explore. Built with LangChain, FastAPI, and APIs for a seamless travel planning experience. 🌍
+🌟 Features
 
-Plan Multi-Day Trips: Get detailed itineraries for any destination, complete with activities and tips.
-Check Weather: Current conditions and 5-day forecasts to keep your plans on track.
-Discover Places: Find nearby attractions, restaurants, or hotels with addresses and details.
-Answer Travel Questions: From visa info to the best time to visit, we've got you covered!
+Trip Planning: Get detailed multi-day itineraries with activities and tips.
+Weather Updates: Current conditions and 5-day forecasts for your destination.
+Place Finder: Discover nearby attractions, restaurants, or hotels.
+Travel Q&A: Answers to visa rules, best travel times, and more!
 
 🛠️ Tech Stack
 
-Python + LangChain for smart AI logic
-FastAPI for a snappy API
-Google Gemini 2.0 Flash for chatty responses
-APIs: Geoapify (locations), OpenWeatherMap (weather), Tavily (web search)
+Python + LangChain
+FastAPI
+Google Gemini 2.0 Flash
+APIs: Geoapify, OpenWeatherMap, Tavily
 
 📂 Project Structure
-travel-assistant/
-├── agent.py              # Sets up the AI agent
-├── api_logic.py         # Handles API calls
-├── travel_tools_setup.py # Defines cool tools
-├── main.py              # FastAPI server
-├── .env                 # Your API keys (keep it secret!)
-├── requirements.txt     # Dependencies
-└── README.md            # You're reading it!
+
+travel_assistant/
+│
+├── main.py           # FastAPI backend
+├── agent.py          # Agent logic (not included here)
+├── .gitignore
+├── requirements.txt
+└── README.md
+
 
 🔧 Setup
 
-Clone the Repo:
-git clone https://github.com/yourusername/travel-assistant.git
+Clone Repo:git clone https://github.com/yourusername/travel-assistant.git
 cd travel-assistant
 
 
-Virtual Environment:
+Virtual Env:
+
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate 
+# Windows: venv\Scripts\activate
 
 
-Install Dependencies:
-pip install -r requirements.txt
+Install Dependencies:pip install -r requirements.txt
 
+Add API Keys:Create .env:
 
-Add API Keys:Create a .env file:
 GEOAPIFY_API_KEY=your_key
 WEATHER_API_KEY=your_key
 TAVILY_API_KEY=your_key
 GOOGLE_API_KEY=your_key
 
-Get keys from Geoapify, OpenWeatherMap, Tavily, and Google.
+Get keys from Geoapify, OpenWeatherMap, Tavily, Google.
+
+🎉 Usage
+
+Run Server:uvicorn main:app --reload
 
 
-🎉 Try It Out!
-
-Start the Server:
-uvicorn main:app --reload
+Query API:curl -X POST http://localhost:8000/ask -H "Content-Type: application/json" -d '{"input": "Plan a 3-day trip to Paris"}'
 
 
-Ask Away:Hit the API at http://localhost:8000/ask:
-curl -X POST http://localhost:8000/ask -H "Content-Type: application/json" -d '{"input": "Plan a 3-day trip to Paris"}'
+CLI Mode:python agent.py
 
-Or run agent.py for a CLI chat:
-python agent.py
+ Try: "Plan a 5-day trip to Skardu", "Weather in Karachi", "Restaurants in Dubai".
 
-Try queries like:
-
-"Plan a 5-day trip to Skardu"
-"Weather in Karachi"
-"Best restaurants in Dubai"
-
-
-
-🌟 Example Output
-Query: "Plan a 3-day trip to Paris"
-Response:
+📋 Example
+Query: "Plan a 3-day trip to Paris"Response:
 Trip Plan:
 - 3-Day Trip to Paris
 - Weather Forecast:
   - 2025-07-29:
-    - Morning: 20°C, clear skies
-    - Afternoon: 25°C, partly cloudy
-    - Night: 18°C, light rain
-- Day 1 Itinerary:
-  - Morning: Eiffel Tower
-    - Address: Champ de Mars, Paris
-    - Category: Tourism
-  - Afternoon: Louvre Museum
-    - Address: 75001 Paris
-    - Category: Tourism
-  - Evening: Café de Flore
-    - Address: 172 Bd Saint-Germain
-    - Category: Catering
+    - Morning: 20°C, clear
+    - Afternoon: 25°C, cloudy
+    - Night: 18°C, rain
+- Day 1:
+  - Morning: Eiffel Tower (Champ de Mars)
+  - Afternoon: Louvre Museum (75001 Paris)
+  - Evening: Café de Flore (172 Bd Saint-Germain)
 ...
-Want restaurant or hotel tips for Paris?
+Need hotel or restaurant suggestions?
 
 🤝 Contribute
-Got ideas? Fork the repo, make a branch, and send a pull request! Let's make travel planning even cooler.
+
+Fork the repo
+Create a branch: git checkout -b feature/your-feature
+Commit: git commit -m "Add feature"
+Push: git push origin feature/your-feature
+Open a pull request
+
 📜 License
-MIT License. See LICENSE for details.
-💬 Questions?
-Open an issue or ping me at umics38@gmail.com. Happy travels! 🌴
+MIT License. See LICENSE.
+💬 Contact
+Open an issue or reach out at [your email/GitHub]. Happy travels! 🌴
