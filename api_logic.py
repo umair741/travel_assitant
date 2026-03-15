@@ -112,55 +112,24 @@ def plan_trip(city, days=3):
     if error:
         return f"Could not plan trip: {error}"
 
-    places, places_error = get_places(lat, lon, radius=15000, limit=days * 4)
-    if places_error:
-        return f"Could not fetch places: {places_error}"
+    places, _ = get_places(lat, lon, radius=15000, limit=days * 3)
     if not places:
         return f"No places found for {city}."
 
-    weather_forecast = get_forecast_weather(lat, lon)
-    weather_dates = list(weather_forecast.keys())
+    forecast = get_forecast_weather(lat, lon)
+    dates = list(forecast.keys())
 
-    # Start building the plan with clear structure
-    plan = "Trip Plan:\n"
-    plan += f"- {days}-Day Trip Plan for {city}\n"
-    plan += "- Weather Forecast:\n"
-    
-    # Add weather forecast with proper nesting
-    for i in range(min(days, len(weather_dates))):
-        if i < len(weather_dates):
-            date = weather_dates[i]
-            plan += f"  - {date}:\n"
-            weather_info = weather_forecast.get(date, {})
-            for time_period in ["Morning", "Afternoon", "Night"]:
-                if time_period in weather_info:
-                    plan += f"    - {time_period}: {weather_info[time_period]}\n"
+    data = f"City: {city} | Days: {days}\n\n"
 
-    # Add itinerary for each day
-    places_used = 0
-    time_periods = ["Morning", "Afternoon", "Evening"]
-    for day in range(1, days + 1):
-        plan += f"- Day {day} Itinerary:\n"
-        max_today = min(3, len(places) - places_used)
-        if max_today == 0:
-            plan += "  - No places available. Enjoy a free day!\n"
-        else:
-            for i in range(max_today):
-                place = places[places_used]
-                time_label = time_periods[i] if i < len(time_periods) else "Later"
-                plan += f"  - {time_label}: {place['name']}\n"
-                plan += f"    - Address: {place['address']}\n"
-                plan += f"    - Category: {place['category']}\n"
-                places_used += 1
-        plan += "\n"
+    data += "Weather Forecast:\n"
+    for date in dates[:days]:
+        data += f"{date}:\n"
+        for slot in ["Morning", "Afternoon", "Night"]:
+            if slot in forecast[date]:
+                data += f"  {slot}: {forecast[date][slot]}\n"
 
-    # Add travel tips
-    plan += "- Travel Tips:\n"
-    plan += "  - Check local transport in {city}\n"
-    plan += "  - Book your hotel in advance\n"
-    plan += "  - Try local food options\n"
-    plan += "  - Watch out for weather conditions\n"
+    data += "\nPlaces to Visit:\n"
+    for p in places:
+        data += f"- {p['name']} | {p['category']} | {p['address']}\n"
 
-    plan += "\nWould you like me to suggest specific hotels or restaurants for this trip?"
-
-    return plan
+    return data

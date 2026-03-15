@@ -13,7 +13,8 @@ def create_travel_agent():
         model="gemini-3-flash-preview",
         google_api_key=os.getenv("GOOGLE_API_KEY"),
         temperature=0.1,
-        convert_system_message_to_human=True
+        convert_system_message_to_human=True,
+        system_instruction="Never use markdown formatting. No **, no ###, no *, no bullets. Use plain text and emojis only."
     )
 
     prompt = ChatPromptTemplate.from_messages([
@@ -42,7 +43,8 @@ You are a friendly and helpful Travel Assistant.
    - Input: search query
 
 📝 RESPONSE RULES:
-- Plain text only, no markdown, no ** or ***
+- Plain text only
+- NEVER use markdown like ###, **, *, --, or any special formatting
 - Use emojis to make responses friendly
 - Keep responses clean and readable
 - Always end with a helpful follow-up question
@@ -60,6 +62,7 @@ You are a friendly and helpful Travel Assistant.
         llm=llm,
         agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
         verbose=True,
+        handle_parsing_errors=True,  # ← added
         agent_kwargs={"prompt": prompt}
     )
     return agent
