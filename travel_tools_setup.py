@@ -3,7 +3,6 @@ from langchain.tools import Tool
 
 
 def get_places_for_agent(query, radius=5000, limit=5):
-
     lat, lon, error = geocode_place(query)
     if error:
         return error
@@ -14,6 +13,20 @@ def get_forecast_for_agent(city):
     if error:
         return error
     return get_forecast_weather(lat, lon)
+
+def plan_trip_for_agent(query):
+    parts = query.strip().split()
+    days = 3
+    city_parts = []
+    
+    for part in parts:
+        if part.isdigit():
+            days = int(part)
+        elif part.lower() != "days":
+            city_parts.append(part)
+    
+    city = " ".join(city_parts)
+    return plan_trip(city, days)
 
 
 weather_tool=Tool.from_function(
@@ -30,7 +43,6 @@ place_tool = Tool.from_function(
     return_direct=True 
 )
 
-
 web_tool=Tool.from_function(
     name="websearchtool",
     func=web_search,
@@ -40,11 +52,10 @@ web_tool=Tool.from_function(
 
 trip_tool = Tool.from_function(
     name="MultiDayTripPlanner",
-    func=plan_trip,
+    func=plan_trip_for_agent,  # ← updated
     description="Use this to plan detailed trips when the user asks for a 2-day, 5-day, or multi-day trip to a place. Input must include city and optionally number of days, e.g., 'Skardu 5 days' or 'Trip to Hunza for 7 days'. Returns a day-wise travel itinerary.",
     return_direct=True 
 )
-
 
 forecast_tool = Tool.from_function(
     name="GetForecastWeather",
@@ -52,7 +63,5 @@ forecast_tool = Tool.from_function(
     description="when there is user saying give me trip plan for days give them also forcast weather in it and give combined response trip plan and weather updates of each days. Input should be a location name (e.g. 'Murree').",
     return_direct=True
 )
-# Export all tools as list
+
 tools = [place_tool, weather_tool, web_tool,trip_tool,forecast_tool]
-
-

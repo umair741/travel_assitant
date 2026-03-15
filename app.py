@@ -2,8 +2,18 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from agent import create_travel_agent
 from fastapi.concurrency import run_in_threadpool
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# CORS add karo
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 agent = create_travel_agent()
 
 class UserQuery(BaseModel):
