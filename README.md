@@ -1,91 +1,166 @@
-✈️ Travel Assistant
-Your AI-powered travel buddy! Plan epic trips, check weather, and discover cool places to eat, stay, or explore. Built with LangChain, FastAPI, and APIs for a seamless travel planning experience. 🌍
-🌟 Features
+# ✈️ AI Travel Assistant
 
-Trip Planning: Get detailed multi-day itineraries with activities and tips.
-Weather Updates: Current conditions and 5-day forecasts for your destination.
-Place Finder: Discover nearby attractions, restaurants, or hotels.
-Travel Q&A: Answers to visa rules, best travel times, and more!
+An intelligent travel assistant powered by **Google Gemini**, **LangChain ReAct Agent**, and **FastAPI**. The agent autonomously decides which tools to use based on user queries — planning trips, fetching real-time weather, finding nearby places, and searching the web.
 
-🛠️ Tech Stack
+---
 
-Python + LangChain
-FastAPI
-Google Gemini 2.0 Flash
-APIs: Geoapify, OpenWeatherMap, Tavily
+## 🧠 How It Works
 
-📂 Project Structure
+This project uses a **ReAct (Reasoning + Acting) Agent** pattern:
 
-travel_assistant/
-│
-├── main.py           # FastAPI backend
-├── agent.py          # Agent logic (not included here)
-├── .gitignore
-├── requirements.txt
-└── README.md
+1. User sends a query
+2. Gemini LLM **reasons** about what needs to be done
+3. Agent **selects the right tool** automatically
+4. Tool fetches real data from APIs
+5. Gemini **formats** the response and returns it to the user
 
+```
+User Query
+    ↓
+Gemini LLM (Reasoning)
+    ↓
+Tool Selection (automatic)
+    ↓
+Real API Data (Weather / Places / Web)
+    ↓
+Formatted Response
+```
 
-🔧 Setup
+---
 
-Clone Repo:git clone https://github.com/yourusername/travel-assistant.git
+## 🚀 Features
+
+- 🗺️ **Multi-day Trip Planning** — day-wise itinerary with real places
+- 🌤️ **Real-time Weather** — current weather + 5-day forecast
+- 📍 **Nearby Places** — hotels, restaurants, tourist attractions
+- 🔍 **Web Search** — general travel info, visa, tips
+- 🤖 **ReAct Agent** — autonomous tool calling with LangChain
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| LLM | Google Gemini (`gemini-3-flash-preview`) |
+| Agent Framework | LangChain ReAct Agent |
+| Backend | FastAPI + Uvicorn |
+| Weather | OpenWeatherMap API |
+| Places & Geocoding | Geoapify API |
+| Web Search | Tavily API |
+
+---
+
+## ⚙️ Setup
+
+### 1. Clone the repo
+```bash
+git clone https://github.com/your-username/travel-assistant.git
 cd travel-assistant
+```
 
-
-Virtual Env:
-
+### 2. Create virtual environment
+```bash
 python -m venv venv
-source venv/bin/activate 
-# Windows: venv\Scripts\activate
+venv\Scripts\activate       # Windows
+source venv/bin/activate    # Mac/Linux
+```
 
+### 3. Install dependencies
+```bash
+pip install -r requirements.txt
+```
 
-Install Dependencies:pip install -r requirements.txt
+### 4. Create `.env` file
+```env
+GOOGLE_API_KEY=your_gemini_api_key
+WEATHER_API_KEY=your_openweathermap_key
+GEOAPIFY_API_KEY=your_geoapify_key
+TAVILY_API_KEY=your_tavily_key
+```
 
-Add API Keys:Create .env:
+### 5. Run the server
+```bash
+uvicorn app:app --reload
+```
 
-GEOAPIFY_API_KEY=your_key
-WEATHER_API_KEY=your_key
-TAVILY_API_KEY=your_key
-GOOGLE_API_KEY=your_key
+### 6. Test via Swagger UI
+```
+http://127.0.0.1:8000/docs
+```
 
-Get keys from Geoapify, OpenWeatherMap, Tavily, Google.
+---
 
-🎉 Usage
+## 🔑 API Keys
 
-Run Server:uvicorn main:app --reload
+| API | Free Tier | Link |
+|-----|-----------|------|
+| Google Gemini | 20 req/day | [aistudio.google.com](https://aistudio.google.com) |
+| OpenWeatherMap | 1000 req/day | [openweathermap.org](https://openweathermap.org) |
+| Geoapify | 3000 req/day | [geoapify.com](https://geoapify.com) |
+| Tavily | 1000 req/month | [tavily.com](https://tavily.com) |
 
+---
 
-Query API:curl -X POST http://localhost:8000/ask -H "Content-Type: application/json" -d '{"input": "Plan a 3-day trip to Paris"}'
+## 📁 Project Structure
 
+```
+travel_assistant/
+├── app.py                  # FastAPI server & API endpoints
+├── agent.py                # LangChain ReAct Agent + Gemini LLM
+├── api_logic.py            # Core logic: Weather, Places, Trip Planning
+├── travel_tools_setup.py   # LangChain Tool definitions
+├── requirements.txt        # Python dependencies
+└── .env                    # API keys (not committed)
+```
 
-CLI Mode:python agent.py
+---
 
- Try: "Plan a 5-day trip to Skardu", "Weather in Karachi", "Restaurants in Dubai".
+## 🛠️ LangChain Tools
 
-📋 Example
-Query: "Plan a 3-day trip to Paris"Response:
-Trip Plan:
-- 3-Day Trip to Paris
-- Weather Forecast:
-  - 2025-07-29:
-    - Morning: 20°C, clear
-    - Afternoon: 25°C, cloudy
-    - Night: 18°C, rain
-- Day 1:
-  - Morning: Eiffel Tower (Champ de Mars)
-  - Afternoon: Louvre Museum (75001 Paris)
-  - Evening: Café de Flore (172 Bd Saint-Germain)
-...
-Need hotel or restaurant suggestions?
+| Tool | Description |
+|------|-------------|
+| `MultiDayTripPlanner` | Plans day-wise trip itinerary with weather |
+| `GetWeather` | Current weather for any city |
+| `GetForecastWeather` | 5-day weather forecast |
+| `GetNearByPlaces` | Nearby hotels, restaurants, tourist spots |
+| `WebSearchTool` | General travel info via web search |
 
-🤝 Contribute
+---
 
-Fork the repo
-Create a branch: git checkout -b feature/your-feature
-Commit: git commit -m "Add feature"
-Push: git push origin feature/your-feature
-Open a pull request
+## 📡 API Endpoints
 
-📜 License
-MIT License. See LICENSE.
-💬 Contact
-Open an issue or reach out at [your email/GitHub]. Happy travels! 🌴
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/ask` | Send query to the travel agent |
+| GET | `/docs` | Swagger UI |
+
+### Request
+```json
+{
+  "input": "Plan a 5 day trip to Lahore"
+}
+```
+
+### Response
+```json
+{
+  "response": "Here is your 5-day Lahore trip plan..."
+}
+```
+
+---
+
+## 💬 Example Queries
+
+- `"Plan a 5 day trip to Lahore"`
+- `"What is the weather in Karachi?"`
+- `"Find nearby restaurants in Murree"`
+- `"Best time to visit Hunza Valley"`
+- `"Visa requirements for Pakistani citizens to Turkey"`
+
+---
+
+## 👨‍💻 Author
+
+Built with ❤️ using **LangChain + Google Gemini + FastAPI**
