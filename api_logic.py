@@ -107,6 +107,7 @@ def web_search(query):
             f"URL: {top.get('url', 'No URL')}"
         )
     return "No answer or results found."
+
 def plan_trip(city, days=3):
     lat, lon, error = geocode_place(city)
     if error:

@@ -7,8 +7,9 @@ from langchain_core.messages import SystemMessage
 import os
 from dotenv import load_dotenv
 
+load_dotenv()
+
 def create_travel_agent():
-    load_dotenv()
     llm = ChatGoogleGenerativeAI(
         model="gemini-3-flash-preview",
         google_api_key=os.getenv("GOOGLE_API_KEY"),
