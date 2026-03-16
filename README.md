@@ -1,3 +1,12 @@
+---
+title: Travel Assistant
+emoji: ✈️
+colorFrom: blue
+colorTo: green
+sdk: docker
+pinned: false
+---
+
 # ✈️ AI Travel Assistant
 
 An intelligent travel assistant powered by **Google Gemini**, **LangChain ReAct Agent**, and **FastAPI**. The agent autonomously decides which tools to use based on user queries — planning trips, fetching real-time weather, finding nearby places, and searching the web.
