@@ -13,7 +13,6 @@ This project uses a **ReAct (Reasoning + Acting) Agent** pattern:
 3. Agent **selects the right tool** automatically
 4. Tool fetches real data from APIs
 5. Gemini **formats** the response and returns it to the user
-
 ```
 User Query
     ↓
@@ -35,6 +34,7 @@ Formatted Response
 - 📍 **Nearby Places** — hotels, restaurants, tourist attractions
 - 🔍 **Web Search** — general travel info, visa, tips
 - 🤖 **ReAct Agent** — autonomous tool calling with LangChain
+- 🐳 **Docker Support** — containerized for easy deployment
 
 ---
 
@@ -48,6 +48,7 @@ Formatted Response
 | Weather | OpenWeatherMap API |
 | Places & Geocoding | Geoapify API |
 | Web Search | Tavily API |
+| Containerization | Docker |
 
 ---
 
@@ -91,6 +92,25 @@ http://127.0.0.1:8000/docs
 
 ---
 
+## 🐳 Docker Setup
+
+### 1. Build the image
+```bash
+docker build -t travel-assistant .
+```
+
+### 2. Run the container
+```bash
+docker run --env-file .env -p 8000:8000 travel-assistant
+```
+
+### 3. Test via Swagger UI
+```
+http://localhost:8000/docs
+```
+
+---
+
 ## 🔑 API Keys
 
 | API | Free Tier | Link |
@@ -103,7 +123,6 @@ http://127.0.0.1:8000/docs
 ---
 
 ## 📁 Project Structure
-
 ```
 travel_assistant/
 ├── app.py                  # FastAPI server & API endpoints
@@ -111,6 +130,8 @@ travel_assistant/
 ├── api_logic.py            # Core logic: Weather, Places, Trip Planning
 ├── travel_tools_setup.py   # LangChain Tool definitions
 ├── requirements.txt        # Python dependencies
+├── dockerfile              # Docker configuration
+├── .dockerignore           # Docker ignore file
 └── .env                    # API keys (not committed)
 ```
 
@@ -163,4 +184,4 @@ travel_assistant/
 
 ## 👨‍💻 Author
 
-Built with ❤️ using **LangChain + Google Gemini + FastAPI**
+Built with ❤️ using **LangChain + Google Gemini + FastAPI + Docker**
