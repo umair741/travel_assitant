@@ -32,6 +32,8 @@ Tool Selection (automatic)
 Real API Data (Weather / Places / Web)
     ↓
 Formatted Response
+    ↓
+LangSmith Tracing (tokens, latency, cost)
 ```
 
 ---
@@ -43,6 +45,7 @@ Formatted Response
 - 📍 **Nearby Places** — hotels, restaurants, tourist attractions
 - 🔍 **Web Search** — general travel info, visa, tips
 - 🤖 **ReAct Agent** — autonomous tool calling with LangChain
+- 📊 **LangSmith Tracing** — token usage, latency, cost monitoring
 - 🐳 **Docker Support** — containerized for easy deployment
 
 ---
@@ -57,6 +60,7 @@ Formatted Response
 | Weather | OpenWeatherMap API |
 | Places & Geocoding | Geoapify API |
 | Web Search | Tavily API |
+| Observability | LangSmith |
 | Containerization | Docker |
 
 ---
@@ -87,6 +91,11 @@ GOOGLE_API_KEY=your_gemini_api_key
 WEATHER_API_KEY=your_openweathermap_key
 GEOAPIFY_API_KEY=your_geoapify_key
 TAVILY_API_KEY=your_tavily_key
+
+# LangSmith (Observability)
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_API_KEY=your_langsmith_api_key
+LANGCHAIN_PROJECT=default
 ```
 
 ### 5. Run the server
@@ -128,6 +137,61 @@ http://localhost:8000/docs
 | OpenWeatherMap | 1000 req/day | [openweathermap.org](https://openweathermap.org) |
 | Geoapify | 3000 req/day | [geoapify.com](https://geoapify.com) |
 | Tavily | 1000 req/month | [tavily.com](https://tavily.com) |
+| LangSmith | 5000 traces/month | [smith.langchain.com](https://smith.langchain.com) |
+
+---
+
+## 📊 LangSmith Observability
+
+This project uses **LangSmith** to monitor and trace all agent activity in real-time.
+
+### What is tracked?
+| Metric | Description |
+|--------|-------------|
+| 🪙 Token Usage | Input/output tokens per request |
+| ⏱️ Latency | How long each tool/API call takes |
+| 💰 Cost | Estimated cost per request |
+| 🔍 Tool Calls | Which tools the agent used and in what order |
+| ❌ Errors | Failed API calls with full stack traces |
+
+### Traced Functions
+| Function | File | What it tracks |
+|----------|------|----------------|
+| `geocode-place` | `api_logic.py` | Geoapify geocoding latency |
+| `get-nearby-places` | `api_logic.py` | Places API response time |
+| `get-current-weather` | `api_logic.py` | OpenWeather API latency |
+| `get-forecast-weather` | `api_logic.py` | Forecast API response time |
+| `web-search` | `api_logic.py` | Tavily search latency |
+| `plan-trip` | `api_logic.py` | Full trip planning chain |
+| `get-places-for-agent` | `travel_tools_setup.py` | Agent places wrapper |
+| `get-forecast-for-agent` | `travel_tools_setup.py` | Agent forecast wrapper |
+| `plan-trip-for-agent` | `travel_tools_setup.py` | Agent trip wrapper |
+
+### Setup LangSmith
+1. Go to [smith.langchain.com](https://smith.langchain.com)
+2. Create an account
+3. Go to **Settings → API Keys → Create API Key**
+4. Add to your `.env` file:
+```env
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_API_KEY=your_key_here
+LANGCHAIN_PROJECT=default
+```
+
+### Example Trace
+```
+AgentExecutor (68s, $0.0145)
+├── ChatGoogleGemini        (8.21s, 556 tokens)
+├── MultiDayTripPlanner     (6.95s)
+│   ├── plan-trip-for-agent
+│   │   └── plan-trip
+│   │       ├── geocode-place        (1.73s)
+│   │       ├── get-nearby-places    (4.01s)
+│   │       └── get-forecast-weather (1.20s)
+└── GetForecastWeather      (3.13s)
+    └── get-forecast-for-agent
+        └── geocode-place            (2.06s)
+```
 
 ---
 
@@ -193,4 +257,4 @@ travel_assistant/
 
 ## 👨‍💻 Author
 
-Built with ❤️ using **LangChain + Google Gemini + FastAPI + Docker**
+Built with ❤️ using **LangChain + Google Gemini + FastAPI + Docker + LangSmith**
