@@ -1,19 +1,22 @@
-from api_logic import get_places,get_weather,web_search,geocode_place,plan_trip,get_forecast_weather
+from api_logic import get_places, get_weather, web_search, geocode_place, plan_trip, get_forecast_weather
 from langchain.tools import Tool
+from langsmith import traceable  # ← NAYA ADD HUA
 
-
+@traceable(name="get-places-for-agent")  # ← NAYA
 def get_places_for_agent(query, radius=5000, limit=5):
     lat, lon, error = geocode_place(query)
     if error:
         return error
     return get_places(lat, lon, radius=radius, limit=limit)
 
+@traceable(name="get-forecast-for-agent")  # ← NAYA
 def get_forecast_for_agent(city):   
     lat, lon, error = geocode_place(city)
     if error:
         return error
     return get_forecast_weather(lat, lon)
 
+@traceable(name="plan-trip-for-agent")  # ← NAYA
 def plan_trip_for_agent(query):
     parts = query.strip().split()
     days = 3
@@ -28,8 +31,8 @@ def plan_trip_for_agent(query):
     city = " ".join(city_parts)
     return plan_trip(city, days)
 
-
-weather_tool=Tool.from_function(
+# Tools bilkul same hain — kuch nahi badla
+weather_tool = Tool.from_function(
     name="GetWeather", 
     func=get_weather,
     description="Get current weather for a city. Input: city name (e.g. 'Karachi')",
@@ -43,7 +46,7 @@ place_tool = Tool.from_function(
     return_direct=False
 )
 
-web_tool=Tool.from_function(
+web_tool = Tool.from_function(
     name="websearchtool",
     func=web_search,
     description="Do a web search for any question or info.",
@@ -52,7 +55,7 @@ web_tool=Tool.from_function(
 
 trip_tool = Tool.from_function(
     name="MultiDayTripPlanner",
-    func=plan_trip_for_agent,  # ← updated
+    func=plan_trip_for_agent,
     description="Use this to plan detailed trips when the user asks for a 2-day, 5-day, or multi-day trip to a place. Input must include city and optionally number of days, e.g., 'Skardu 5 days' or 'Trip to Hunza for 7 days'. Returns a day-wise travel itinerary.",
     return_direct=False
 )
@@ -64,4 +67,4 @@ forecast_tool = Tool.from_function(
     return_direct=False
 )
 
-tools = [place_tool, weather_tool, web_tool,trip_tool,forecast_tool]
+tools = [place_tool, weather_tool, web_tool, trip_tool, forecast_tool]

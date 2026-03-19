@@ -2,6 +2,7 @@ import os
 import requests
 from dotenv import load_dotenv
 from tavily import TavilyClient
+from langsmith import traceable  # ← NAYA ADD HUA
 
 # Load API keys from .env file
 load_dotenv()
@@ -10,6 +11,7 @@ WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 
 # Get coordinates from city name
+@traceable(name="geocode-place")  # ← NAYA
 def geocode_place(place_name):
     url = f"https://api.geoapify.com/v1/geocode/search?text={place_name}&apiKey={GEOAPIFY_API_KEY}"
     response = requests.get(url)
@@ -21,10 +23,11 @@ def geocode_place(place_name):
     if not features:
         return None, None, "No coordinates found."
 
-    coords = features[0]["geometry"]["coordinates"]  # [lon, lat]
-    return coords[1], coords[0], None  # lat, lon
+    coords = features[0]["geometry"]["coordinates"]
+    return coords[1], coords[0], None
 
 # Get nearby places
+@traceable(name="get-nearby-places")  # ← NAYA
 def get_places(lat, lon, radius=5000, limit=10):
     url = (
         f"https://api.geoapify.com/v2/places?"
@@ -49,6 +52,7 @@ def get_places(lat, lon, radius=5000, limit=10):
     return places, None
 
 # Current weather
+@traceable(name="get-current-weather")  # ← NAYA
 def get_weather(city):
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}&units=metric"
     response = requests.get(url)
@@ -61,6 +65,7 @@ def get_weather(city):
     return f"Current weather in {city}: {temp}°C with {desc}"
 
 # 5-day forecast
+@traceable(name="get-forecast-weather")  # ← NAYA
 def get_forecast_weather(lat, lon):
     url = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={WEATHER_API_KEY}&units=metric"
     response = requests.get(url)
@@ -93,6 +98,7 @@ def get_forecast_weather(lat, lon):
     return daily_weather
 
 # Web search
+@traceable(name="web-search")  # ← NAYA
 def web_search(query):
     client = TavilyClient(TAVILY_API_KEY)
     result = client.search(query=query)
@@ -108,6 +114,7 @@ def web_search(query):
         )
     return "No answer or results found."
 
+@traceable(name="plan-trip", run_type="chain")  # ← NAYA (chain kyunke andar multiple functions call hote hain)
 def plan_trip(city, days=3):
     lat, lon, error = geocode_place(city)
     if error:
