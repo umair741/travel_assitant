@@ -1,6 +1,6 @@
 from langchain.agents import initialize_agent, AgentType
 from langchain_google_genai import ChatGoogleGenerativeAI
-
+from langchain.memory import ConversationSummaryBufferMemory  # ← CHANGED
 from travel_tools_setup import tools
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import SystemMessage
@@ -16,6 +16,13 @@ def create_travel_agent():
         temperature=0.1,
         convert_system_message_to_human=True,
         system_instruction="Never use markdown formatting. No **, no ###, no *, no bullets. Use plain text and emojis only."
+    )
+
+    memory = ConversationSummaryBufferMemory(
+        llm=llm,
+        memory_key="chat_history",
+        return_messages=True,
+        max_token_limit=2000
     )
 
     prompt = ChatPromptTemplate.from_messages([
@@ -54,6 +61,7 @@ You are a friendly and helpful Travel Assistant.
 - If user asks for trip plan without days, ask first!
 - Never assume number of days
 """),
+        MessagesPlaceholder(variable_name="chat_history"), 
         ("human", "{input}"),
         MessagesPlaceholder(variable_name="agent_scratchpad"),
     ])
@@ -61,9 +69,10 @@ You are a friendly and helpful Travel Assistant.
     agent = initialize_agent(
         tools=tools,
         llm=llm,
-        agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+        agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,  
+        memory=memory, 
         verbose=True,
-        handle_parsing_errors=True,  # ← added
+        handle_parsing_errors=True,
         agent_kwargs={"prompt": prompt}
     )
     return agent
@@ -74,8 +83,13 @@ def main():
 
     while True:
         user_input = input("You: ")
+        if user_input.lower() == "exit":
+            break
         try:
             response = agent.invoke({"input": user_input})
             print("Assistant:", response["output"])
         except Exception as e:
             print("⚠️ Error:", e)
+
+if __name__ == "__main__":
+    main()
