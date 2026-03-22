@@ -45,6 +45,7 @@ LangSmith Tracing (tokens, latency, cost)
 - 📍 **Nearby Places** — hotels, restaurants, tourist attractions
 - 🔍 **Web Search** — general travel info, visa, tips
 - 🤖 **ReAct Agent** — autonomous tool calling with LangChain
+- 🧠 **Conversation Memory** — agent remembers previous messages in a session
 - 📊 **LangSmith Tracing** — token usage, latency, cost monitoring
 - 🐳 **Docker Support** — containerized for easy deployment
 
@@ -56,12 +57,41 @@ LangSmith Tracing (tokens, latency, cost)
 |-------|-----------|
 | LLM | Google Gemini (`gemini-3-flash-preview`) |
 | Agent Framework | LangChain ReAct Agent |
+| Memory | LangChain `ConversationSummaryBufferMemory` |
 | Backend | FastAPI + Uvicorn |
 | Weather | OpenWeatherMap API |
 | Places & Geocoding | Geoapify API |
 | Web Search | Tavily API |
 | Observability | LangSmith |
 | Containerization | Docker |
+
+---
+
+## 🧠 Conversation Memory
+
+This project uses **`ConversationSummaryBufferMemory`** from LangChain to give the agent memory during a session.
+
+### How it works
+```
+User: "Plan a 5 day trip to Lahore"
+    ↓ saved in memory
+User: "What was the first day activity?"
+    ↓ agent remembers previous response ✅
+```
+
+### Memory Type
+| Type | Description |
+|------|-------------|
+| `ConversationSummaryBufferMemory` | Keeps recent messages + summarizes older ones automatically |
+
+### Key Settings
+| Setting | Value | Description |
+|---------|-------|-------------|
+| `memory_key` | `chat_history` | Key used in prompt |
+| `return_messages` | `True` | Returns message objects |
+| `max_token_limit` | `2000` | Summarizes after 2000 tokens |
+
+> Note: Memory is session-based — it resets when the server restarts.
 
 ---
 
@@ -199,7 +229,7 @@ AgentExecutor (68s, $0.0145)
 ```
 travel_assistant/
 ├── app.py                  # FastAPI server & API endpoints
-├── agent.py                # LangChain ReAct Agent + Gemini LLM
+├── agent.py                # LangChain ReAct Agent + Gemini LLM + Memory
 ├── api_logic.py            # Core logic: Weather, Places, Trip Planning
 ├── travel_tools_setup.py   # LangChain Tool definitions
 ├── requirements.txt        # Python dependencies
