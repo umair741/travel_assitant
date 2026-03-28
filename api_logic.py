@@ -51,8 +51,8 @@ def get_places(lat, lon, radius=5000, limit=10):
     
     return places, None
 
-# Current weather
-@traceable(name="get-current-weather")  # ← NAYA
+
+@traceable(name="get-current-weather")  
 def get_weather(city):
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}&units=metric"
     response = requests.get(url)
@@ -64,8 +64,8 @@ def get_weather(city):
     desc = data["weather"][0]["description"]
     return f"Current weather in {city}: {temp}°C with {desc}"
 
-# 5-day forecast
-@traceable(name="get-forecast-weather")  # ← NAYA
+
+@traceable(name="get-forecast-weather")  
 def get_forecast_weather(lat, lon):
     url = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={WEATHER_API_KEY}&units=metric"
     response = requests.get(url)
@@ -98,7 +98,7 @@ def get_forecast_weather(lat, lon):
     return daily_weather
 
 # Web search
-@traceable(name="web-search")  # ← NAYA
+@traceable(name="web-search")  
 def web_search(query):
     client = TavilyClient(TAVILY_API_KEY)
     result = client.search(query=query)
@@ -114,7 +114,7 @@ def web_search(query):
         )
     return "No answer or results found."
 
-@traceable(name="plan-trip", run_type="chain")  # ← NAYA (chain kyunke andar multiple functions call hote hain)
+@traceable(name="plan-trip", run_type="chain")  
 def plan_trip(city, days=3):
     lat, lon, error = geocode_place(city)
     if error:

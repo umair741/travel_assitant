@@ -1,6 +1,6 @@
 from langchain.agents import initialize_agent, AgentType
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.memory import ConversationSummaryBufferMemory  # ← CHANGED
+from langchain.memory import ConversationSummaryBufferMemory  
 from travel_tools_setup import tools
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import SystemMessage
